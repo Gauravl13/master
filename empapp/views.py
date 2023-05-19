@@ -2,7 +2,6 @@ from django.shortcuts import render,redirect
 from elasticsearch import Elasticsearch
 from .models import Employee
 from .form import MyForm
-from django.contrib import messages
 from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -12,7 +11,9 @@ from django.contrib import messages
 
 
 
+
 def add_details(request):
+    """Function for create new user"""
     if request.method == 'POST':
         form = MyForm(request.POST)
         if form.is_valid():
@@ -52,6 +53,7 @@ def add_details(request):
     return render(request, 'display.html', {'form': form})
 
 def getdetails(request):
+    """Function for display data on dashboard"""
     es = Elasticsearch('http://localhost:9200/')
     query = {
         "query": {
@@ -60,11 +62,12 @@ def getdetails(request):
     }
     search_data = es.search(index='userinformation', body=query)
     results = [hit['_source'] for hit in search_data['hits']['hits']]
-    print(results)
+    # print(results)
     context = {'results': results}
     return render(request, 'screen.html', context)
 
 def update(request,emp_id):
+    """Function for updating data"""
     es = Elasticsearch('http://localhost:9200/')
     document = es.get(index='userinformation', id=emp_id)
     if request.method=='POST':
@@ -99,6 +102,7 @@ def update(request,emp_id):
 
 
 def deletedata(request,emp_id):
+    """Function for deleting data"""
     es = Elasticsearch('http://localhost:9200/')
     """Delete Details"""
     if request.method=='POST':
@@ -109,6 +113,7 @@ def deletedata(request,emp_id):
 es_client = connections.create_connection(hosts=[settings.ELASTICSEARCH_HOST])
 
 def handle_data(request):
+    """Function for store data in PostgreSQL if Elastic search server not available"""
     if request.method == 'POST':
         form = MyForm(request.POST)
         if form.is_valid():
@@ -125,17 +130,9 @@ def handle_data(request):
     return render(request, 'display.html', {'form': form})
 
 
-# @receiver(post_save,sender=Employee)
-# def update_es(sender,instance,created,**kwargs):
-#     print('update_es called')
-#     if es_client.ping():
-#         instance.indexing()
-#         instance.delete()
-#     else:
-#         print('Elastic Search not available')
-#
-# post_save.connect(update_es, sender=Employee)
-# print('update_es connected to post_save signal')
+
+
+
 
 
 

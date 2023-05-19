@@ -1,4 +1,6 @@
+from __future__ import absolute_import,unicode_literals
 import os
+
 from celery import Celery
 from datetime import datetime, timedelta
 
@@ -10,5 +12,5 @@ app.autodiscover_tasks()
 
 app.conf.beat_schedule = {
     'sync-data-every-five-minutes': {
-        'task': 'sync_data',
+        'task': 'empapp.tasks.sync_data_task',
         'schedule': timedelta(minutes=5)}}

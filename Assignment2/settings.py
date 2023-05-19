@@ -44,7 +44,11 @@ INSTALLED_APPS = [
     'empapp',
     'elasticsearch',
     'django_crontab',
-    'django_celery_beat'
+    'django_celery_beat',
+    'django_elasticsearch_dsl',
+    'rest_framework',
+    'django_elasticsearch_dsl_drf',
+
 ]
 
 MIDDLEWARE = [
@@ -157,4 +161,21 @@ CELERY_TIMEZONE = 'UTC'
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 
 
+CRONJOBS = [
+    ('*/5 * * * *', 'django.core.management.call_command', ['sync_data']),
+]
 
+ELASTICSEARCH_DSL={
+    'default': {
+        'hosts': 'localhost:9200'
+    },
+}
+
+PASSWORD_HASHERS = [
+    'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
+]
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'django_elasticsearch_dsl_drf.auth.backends.MultipleIndicesMixin',
+]

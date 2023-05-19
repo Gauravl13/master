@@ -3,6 +3,9 @@ from elasticsearch_dsl import Document, Keyword, Text
 from elasticsearch_dsl.connections import connections
 from django.conf import settings
 import datetime
+from django.contrib.auth.models import AbstractUser
+
+
 
 
 class Employee(models.Model):
@@ -10,7 +13,7 @@ class Employee(models.Model):
     first_name=models.CharField(max_length=40)
     last_name=models.CharField(max_length=40)
     email=models.EmailField()
-    mobileno=models.IntegerField()
+    mobileno=models.BigIntegerField()
     gender=models.TextField()
     created_at=models.DateTimeField(default=datetime.date.today)
     updated_at=models.DateTimeField()
